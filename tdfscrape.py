@@ -75,31 +75,31 @@ def print_overall(date, sort='rank'):
         stage_match = STAGE_RESULT_RE.match(text[2])
         overall_match = OVERALL_RESULT_RE.match(text[4])
         rows.append([
+            0,
             stage_match.group('name'),
             int(overall_match.group('rank')),
             int(overall_match.group('previous_rank')),
             int(overall_match.group('previous_rank')) - int(overall_match.group('rank')),
             int(overall_match.group('overall_points')),
             int(overall_match.group('points_behind')),
-            0,
             0
         ])
 
-    rows.sort(key=lambda row: row[1])
-    top = rows[0][4]
+    rows.sort(key=lambda row: row[2])
+    top = rows[0][5]
     for i, row in enumerate(rows):
-        row[6] = i + 1
-        row[7] = row[3] - top
+        row[0] = i + 1
+        row[7] = row[5] - top
 
     if sort == 'stage_rank':
-        rows.sort(key=lambda row: row[1])
+        rows.sort(key=lambda row: row[2])
     elif sort == 'pool_rank':
-        rows.sort(key=lambda row: row[6])
+        rows.sort(key=lambda row: row[0])
 
     print(tabulate(
         rows,
         headers=[
-            'Name', 'Rank', 'Prev. Rank', 'Rank Change', 'Points', 'Behind', 'Pool Rank', 'Pool Behind'
+            'Pool Rank', 'Name', 'Rank', 'Prev. Rank', 'Rank Change', 'Points', 'Behind', 'Pool Behind'
         ]
     ))
 
@@ -120,28 +120,28 @@ def print_stage(date, sort='rank'):
         text = html.pre.get_text().split('\n')
         stage_match = STAGE_RESULT_RE.match(text[2])
         rows.append([
+            0,
             stage_match.group('name'),
             int(stage_match.group('stage_rank')),
             int(stage_match.group('stage_points')),
-            0,
             0
         ])
 
-    rows.sort(key=lambda row: row[1])
-    top = rows[0][2]
+    rows.sort(key=lambda row: row[2])
+    top = rows[0][3]
     for i, row in enumerate(rows):
-        row[3] = i + 1
-        row[4] = row[2] - top
+        row[0] = i + 1
+        row[4] = row[3] - top
 
     if sort == 'stage_rank':
-        rows.sort(key=lambda row: row[1])
+        rows.sort(key=lambda row: row[2])
     elif sort == 'pool_rank':
-        rows.sort(key=lambda row: row[3])
+        rows.sort(key=lambda row: row[0])
 
     print(tabulate(
         rows,
         headers=[
-            'Name', 'Stage Rank', 'Stage Points', 'Pool Rank', 'Pool Behind'
+            'Pool Rank', 'Name', 'Stage Rank', 'Stage Points', 'Pool Behind'
         ]
     ))
 
