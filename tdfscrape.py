@@ -58,7 +58,7 @@ def build_arg_parser():
     return parser
 
 
-def print_stage(date, sort='rank'):
+def print_overall(date, sort='rank'):
     rows = []
     for player in PLAYERS:
         response = requests.post(
@@ -76,8 +76,6 @@ def print_stage(date, sort='rank'):
         overall_match = OVERALL_RESULT_RE.match(text[4])
         rows.append([
             stage_match.group('name'),
-            int(stage_match.group('stage_rank')),
-            int(stage_match.group('stage_points')),
             int(overall_match.group('rank')),
             int(overall_match.group('previous_rank')),
             int(overall_match.group('overall_points')),
@@ -86,21 +84,63 @@ def print_stage(date, sort='rank'):
             0
         ])
 
-    rows.sort(key=lambda row: row[3])
-    top = rows[0][5]
+    rows.sort(key=lambda row: row[1])
+    top = rows[0][3]
     for i, row in enumerate(rows):
-        row[7] = i + 1
-        row[8] = row[5] - top
+        row[5] = i + 1
+        row[6] = row[3] - top
 
     if sort == 'stage_rank':
         rows.sort(key=lambda row: row[1])
     elif sort == 'pool_rank':
-        rows.sort(key=lambda row: row[7])
+        rows.sort(key=lambda row: row[5])
 
     print(tabulate(
         rows,
         headers=[
-            'Name', 'Stage Rank', 'Stage Points', 'Rank', 'Prev. Rank', 'Points', 'Behind', 'Pool Rank', 'Pool Behind'
+            'Name', 'Rank', 'Prev. Rank', 'Points', 'Behind', 'Pool Rank', 'Pool Behind'
+        ]
+    ))
+
+
+def print_stage(date, sort='rank'):
+    rows = []
+    for player in PLAYERS:
+        response = requests.post(
+            'http://ifarm.nl/cgi-bin/getlines.cgi',
+            {
+                'DATE': date.strftime('%Y%m%d'),
+                'SEARCH': player,
+            }
+        )
+        response.raise_for_status()
+
+        html = BeautifulSoup(response.text, 'html.parser')
+        text = html.pre.get_text().split('\n')
+        stage_match = STAGE_RESULT_RE.match(text[2])
+        rows.append([
+            stage_match.group('name'),
+            int(stage_match.group('stage_rank')),
+            int(stage_match.group('stage_points')),
+            0,
+            0
+        ])
+
+    rows.sort(key=lambda row: row[1])
+    top = rows[0][2]
+    for i, row in enumerate(rows):
+        row[3] = i + 1
+        row[4] = row[2] - top
+
+    if sort == 'stage_rank':
+        rows.sort(key=lambda row: row[1])
+    elif sort == 'pool_rank':
+        rows.sort(key=lambda row: row[3])
+
+    print(tabulate(
+        rows,
+        headers=[
+            'Name', 'Stage Rank', 'Stage Points', 'Pool Rank', 'Pool Behind'
         ]
     ))
 
@@ -134,7 +174,14 @@ if __name__ == '__main__':
 
     read_players(args.file)
 
-    if args.type == 'stage':
+    if args.type == 'overall':
+        try:
+            date = datetime.strptime(str(args.date), '%Y%m%d')
+        except ValueError:
+            print('Invalid date for stage. Must be YYYYMMDD.', file=sys.stderr)
+            sys.exit(1)
+        print_overall(date, args.sort)
+    elif args.type == 'stage':
         try:
             date = datetime.strptime(str(args.date), '%Y%m%d')
         except ValueError:

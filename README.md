@@ -56,15 +56,23 @@ Ranking: 303        Points: 108 67  0  0  0  0 41
 
 Found 1 participant.
 ```
-Use the `stage` command to list results for a stage and current game standings:
+Use the `stage` command to list results for a given stage:
 ```
 $ ./tdfscrape.py stage --date=20150711
-Name        Stage Rank    Stage Points    Rank    Prev. Rank    Points    Behind    Pool Rank    Pool Behind
---------  ------------  --------------  ------  ------------  --------  --------  -----------  -------------
-Erik TKS            35              41     303           311       108      -195            1              0
+Name        Stage Rank    Stage Points    Pool Rank    Pool Behind
+--------  ------------  --------------  -----------  -------------
+Erik TKS            35              41            1              0
 ```
 
 The 'Pool Rank' and 'Pool Behind' columns show the standing for your local pool i.e. 
 all the players listed in the input file.
+
+Similarly, use the `overall` command to see overall standings up to a given date:
+```
+$ ./tdfscrape.py overall --date=20150711
+Name        Rank    Prev. Rank    Points    Behind    Pool Rank    Pool Behind
+--------  ------  ------------  --------  --------  -----------  -------------
+Erik TKS     303           311       108      -195            1              0
+```
 
 Run `tdfscrape.py --help` to see a list of all options.
