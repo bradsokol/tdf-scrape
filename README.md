@@ -1,7 +1,8 @@
 TDF Scrape
 ==========
 
-Since 1994, Erik T has run a Tour de France game where players put together
+Since 1994, Erik T has run an [Internet Tour de France Game](http://ifarm.nl/tdf/)
+where players put together
 hypothetical cycling teams that are scored on the performance of real riders
 in the Tour de France. Some friends and I have run a small, friendly pool 
 for many years, using this game for scoring.
@@ -57,7 +58,7 @@ Found 1 participant.
 ```
 Use the `stage` command to list results for a stage and current game standings:
 ```
-$ ./tdfscrape.py stage --date=20150711 -f erik.txt
+$ ./tdfscrape.py stage --date=20150711
 Name        Stage Rank    Stage Points    Rank    Prev. Rank    Points    Behind    Pool Rank    Pool Behind
 --------  ------------  --------------  ------  ------------  --------  --------  -----------  -------------
 Erik TKS            35              41     303           311       108      -195            1              0
