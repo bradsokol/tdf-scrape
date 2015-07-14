@@ -78,6 +78,7 @@ def print_overall(date, sort='rank'):
             stage_match.group('name'),
             int(overall_match.group('rank')),
             int(overall_match.group('previous_rank')),
+            int(overall_match.group('previous_rank')) - int(overall_match.group('rank')),
             int(overall_match.group('overall_points')),
             int(overall_match.group('points_behind')),
             0,
@@ -85,20 +86,20 @@ def print_overall(date, sort='rank'):
         ])
 
     rows.sort(key=lambda row: row[1])
-    top = rows[0][3]
+    top = rows[0][4]
     for i, row in enumerate(rows):
-        row[5] = i + 1
-        row[6] = row[3] - top
+        row[6] = i + 1
+        row[7] = row[3] - top
 
     if sort == 'stage_rank':
         rows.sort(key=lambda row: row[1])
     elif sort == 'pool_rank':
-        rows.sort(key=lambda row: row[5])
+        rows.sort(key=lambda row: row[6])
 
     print(tabulate(
         rows,
         headers=[
-            'Name', 'Rank', 'Prev. Rank', 'Points', 'Behind', 'Pool Rank', 'Pool Behind'
+            'Name', 'Rank', 'Prev. Rank', 'Rank Change', 'Points', 'Behind', 'Pool Rank', 'Pool Behind'
         ]
     ))
 
