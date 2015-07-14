@@ -1,8 +1,6 @@
 #! /usr/bin/env python
 
-from datetime import date
 from datetime import datetime
-from operator import itemgetter
 import argparse
 import re
 import sys
