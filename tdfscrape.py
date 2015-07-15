@@ -58,6 +58,16 @@ def build_arg_parser():
     return parser
 
 
+def compute_rank(rows, column_to_rank, result_column):
+    value = 9999
+    for rank, row in enumerate(rows):
+        if row[column_to_rank] < value:
+            value = row[column_to_rank]
+            row[result_column] = rank + 1
+        else:
+            row[result_column] = ' '
+
+
 def print_overall(date, sort='rank'):
     rows = []
     for player in PLAYERS:
@@ -90,6 +100,7 @@ def print_overall(date, sort='rank'):
     for i, row in enumerate(rows):
         row[0] = i + 1
         row[7] = row[5] - top
+    compute_rank(rows, 5, 0)
 
     if sort == 'stage_rank':
         rows.sort(key=lambda row: row[2])
@@ -129,9 +140,9 @@ def print_stage(date, sort='rank'):
 
     rows.sort(key=lambda row: row[2])
     top = rows[0][3]
-    for i, row in enumerate(rows):
-        row[0] = i + 1
+    for row in rows:
         row[4] = row[3] - top
+    compute_rank(rows, 3, 0)
 
     if sort == 'stage_rank':
         rows.sort(key=lambda row: row[2])
