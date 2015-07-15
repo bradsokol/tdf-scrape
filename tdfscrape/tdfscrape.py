@@ -10,6 +10,8 @@ from tabulate import tabulate
 import requests
 
 
+__version__ = '0.1.0'
+
 PLAYERS = []
 
 OVERALL_RESULT_RE = re.compile(
@@ -180,7 +182,7 @@ def read_players(players_file):
             PLAYERS.remove(player)
 
 
-if __name__ == '__main__':
+def main():
     arg_parser = build_arg_parser()
     args = arg_parser.parse_args()
 
@@ -205,3 +207,7 @@ if __name__ == '__main__':
             print('The year parameter is required.', file=sys.stderr)
             sys.exit(1)
         print_teams(args.year)
+
+
+if __name__ == '__main__':
+    main()
