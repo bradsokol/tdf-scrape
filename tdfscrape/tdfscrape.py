@@ -16,7 +16,7 @@ PLAYERS = []
 
 OVERALL_RESULT_RE = re.compile(
     r'^ *(?P<rank>[\d]+)[.] *[(](?P<previous_rank>[\d]+)[)]'
-    ' *(?P<overall_points>[\d]+)[(](?P<stage_delta>[+-]?[\d]+),(?P<points_behind>[-]?[\d]+)[)] *(?P<name>.+)'
+    ' *(?P<overall_points>[\d]+) *[(](?P<stage_delta>[+-]?[\d]+),(?P<points_behind>[-]?[\d]+)[)] *(?P<name>.+)'
     '[(](?P<country>.+)[)]$')
 STAGE_RESULT_RE = re.compile(
     r'^ *(?P<stage_rank>[\d]+)[.] *(?P<stage_points>[\d]+) (?P<name>.+) [(](?P<country>.*)[)]$')
