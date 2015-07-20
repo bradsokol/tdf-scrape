@@ -17,7 +17,7 @@ PLAYERS = []
 OVERALL_RESULT_RE = re.compile(
     r'^ *(?P<rank>[\d]+)[.] *[(](?P<previous_rank>[\d]+)[)]'
     ' *(?P<overall_points>[\d]+) *[(](?P<stage_delta>[+-]?[\d]+),(?P<points_behind>[-]?[\d]+)[)] *(?P<name>.+)'
-    '[(](?P<country>.+)[)]$')
+    ' *[(](?P<country>.+)[)]$')
 STAGE_RESULT_RE = re.compile(
     r'^ *(?P<stage_rank>[\d]+)[.] *(?P<stage_points>[\d]+) (?P<name>.+) [(](?P<country>.*)[)]$')
 
@@ -84,8 +84,9 @@ def print_overall(date, sort='rank'):
 
         html = BeautifulSoup(response.text, 'html.parser')
         text = html.pre.get_text().split('\n')
+        offset = 1 if len(text) == 8 else 0
         stage_match = STAGE_RESULT_RE.match(text[2])
-        overall_match = OVERALL_RESULT_RE.match(text[4])
+        overall_match = OVERALL_RESULT_RE.match(text[4 + offset])
         rows.append([
             0,
             stage_match.group('name'),
