@@ -39,6 +39,12 @@ def build_arg_parser():
         help='Name of file containing list of players in a pool. Default is players.txt.'
     )
     parser.add_argument(
+        '-p',
+        '--pool-only',
+        action='store_true',
+        help='Display only the statistics relevant to the pool. Suppresses overall ranking statistics.'
+    )
+    parser.add_argument(
         '-s',
         '--sort',
         choices=['pool_rank', 'rank', 'stage_rank'],
@@ -70,7 +76,7 @@ def compute_rank(rows, column_to_rank, result_column):
             row[result_column] = ' '
 
 
-def print_overall(date, sort='rank'):
+def print_overall(date, sort='rank', pool_only=False):
     rows = []
     for player in PLAYERS:
         response = requests.post(
@@ -87,36 +93,50 @@ def print_overall(date, sort='rank'):
         offset = 1 if len(text) == 8 else 0
         stage_match = STAGE_RESULT_RE.match(text[2])
         overall_match = OVERALL_RESULT_RE.match(text[4 + offset])
-        rows.append([
-            0,
-            stage_match.group('name'),
-            int(overall_match.group('rank')),
-            int(overall_match.group('previous_rank')),
-            int(overall_match.group('previous_rank')) - int(overall_match.group('rank')),
-            int(overall_match.group('overall_points')),
-            int(overall_match.group('points_behind')),
-            0
-        ])
+        if pool_only:
+            rows.append([
+                0,
+                stage_match.group('name'),
+                int(overall_match.group('rank')),
+                int(overall_match.group('overall_points')),
+                0
+            ])
+        else:
+            rows.append([
+                0,
+                stage_match.group('name'),
+                int(overall_match.group('rank')),
+                int(overall_match.group('previous_rank')),
+                int(overall_match.group('previous_rank')) - int(overall_match.group('rank')),
+                int(overall_match.group('overall_points')),
+                int(overall_match.group('points_behind')),
+                0
+            ])
 
     rows.sort(key=lambda row: row[2])
-    top = rows[0][5]
-    for i, row in enumerate(rows):
-        row[0] = i + 1
-        row[7] = row[5] - top
-    compute_rank(rows, 5, 0)
+    if pool_only:
+        top = rows[0][3]
+        for i, row in enumerate(rows):
+            row[0] = i + 1
+            row[4] = row[3] - top
+        compute_rank(rows, 3, 0)
+    else:
+        top = rows[0][5]
+        for i, row in enumerate(rows):
+            row[0] = i + 1
+            row[7] = row[5] - top
+        compute_rank(rows, 5, 0)
 
-    if sort == 'stage_rank':
+    if sort == 'stage_rank' and not pool_only:
         rows.sort(key=lambda row: row[2])
     elif sort == 'pool_rank':
         rows.sort(key=lambda row: row[0])
 
-    print(tabulate(
-        rows,
-        headers=[
-            'Pool Rank', 'Name', 'Rank', 'Prev. Rank', 'Rank Change', 'Points', 'Behind', 'Pool Behind'
-        ]
-    ))
-
+    if pool_only:
+        headers = ['Pool Rank', 'Overall Rank', 'Name', 'Points', 'Points Behind']
+    else:
+        headers = [ 'Pool Rank', 'Name', 'Rank', 'Prev. Rank', 'Rank Change', 'Points', 'Behind', 'Pool Behind' ]
+    print(tabulate(rows, headers=headers)) 
 
 def print_stage(date, sort='rank'):
     rows = []
@@ -195,7 +215,7 @@ def main():
         except ValueError:
             print('Invalid date for stage. Must be YYYYMMDD.', file=sys.stderr)
             sys.exit(1)
-        print_overall(date, args.sort)
+        print_overall(date, args.sort, args.pool_only)
     elif args.type == 'stage':
         try:
             date = datetime.strptime(str(args.date), '%Y%m%d')
