@@ -133,7 +133,7 @@ def print_overall(date, sort='rank', pool_only=False):
         rows.sort(key=lambda row: row[0])
 
     if pool_only:
-        headers = ['Pool Rank', 'Overall Rank', 'Name', 'Points', 'Points Behind']
+        headers = ['Pool Rank', 'Name', 'Overall Rank', 'Points', 'Points Behind']
     else:
         headers = [ 'Pool Rank', 'Name', 'Rank', 'Prev. Rank', 'Rank Change', 'Points', 'Behind', 'Pool Behind' ]
     print(tabulate(rows, headers=headers)) 
