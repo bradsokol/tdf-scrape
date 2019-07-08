@@ -15,7 +15,7 @@ __version__ = '0.1.0'
 PLAYERS = []
 
 OVERALL_RESULT_RE = re.compile(
-    r'^ *(?P<rank>[\d]+)[.] *[(](?P<previous_rank>[\d]+)[)]'
+    r'^ *(?P<rank>[\d]+)[.] *[(](?P<previous_rank>[\d-]+)[)]'
     ' *(?P<overall_points>[\d]+) *[(](?P<stage_delta>[+-]?[\d]+),(?P<points_behind>[-]?[\d]+)[)] *(?P<name>.+)'
     ' *[(](?P<country>.+)[)]$')
 STAGE_RESULT_RE = re.compile(
@@ -102,12 +102,13 @@ def print_overall(date, sort='rank', pool_only=False):
                 0
             ])
         else:
+            previous_rank = 0 if (overall_match.group('previous_rank') == '-') else int(overall_match.group('previous_rank'))
             rows.append([
                 0,
                 stage_match.group('name'),
                 int(overall_match.group('rank')),
-                int(overall_match.group('previous_rank')),
-                int(overall_match.group('previous_rank')) - int(overall_match.group('rank')),
+                previous_rank,
+                previous_rank - int(overall_match.group('rank')),
                 int(overall_match.group('overall_points')),
                 int(overall_match.group('points_behind')),
                 0
